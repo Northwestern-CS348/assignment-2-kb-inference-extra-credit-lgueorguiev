@@ -144,12 +144,10 @@ class KnowledgeBase(object):
 
         indent_counter = 0
 
-        if isinstance(fact_or_rule, Fact):
-            if not self._get_fact(fact_or_rule):
-                return "Fact is not in the KB"
-        elif isinstance(fact_or_rule, Rule):
-            if not self._get_rule(fact_or_rule):
-                return "Rule is not in the KB"
+        if isinstance(fact_or_rule, Fact) and not self._get_fact(fact_or_rule):
+            return "Fact is not in the KB"
+        elif isinstance(fact_or_rule, Rule) and not self._get_rule(fact_or_rule):
+            return "Rule is not in the KB"
         elif not isinstance(fact_or_rule, Fact) and not isinstance(fact_or_rule, Rule):
             return False
         else:
@@ -159,22 +157,17 @@ class KnowledgeBase(object):
         ret = ""
         if isinstance(fact_or_rule, Fact):
             ret += "fact: " + str(fact_or_rule.statement)
-            if fact_or_rule.asserted:
-                ret += " ASSERTED"
         if isinstance(fact_or_rule, Rule):
             ret += "rule: ("
             for i in fact_or_rule.lhs:
                 ret += str(i) + ", "
             ret = ret[:-2]
             ret += ") -> " + str(fact_or_rule.rhs)
-            if fact_or_rule.asserted:
-                ret += " ASSERTED"
         if fact_or_rule.supported_by:
             ret += "\n"
             for j in fact_or_rule.supported_by:
                 ret += " " * (counter + 2) + "SUPPORTED BY\n"
                 ret += self.recur(j[0], counter + 4) + self.recur(j[1], counter + 4)
-
         return ret
 
 
