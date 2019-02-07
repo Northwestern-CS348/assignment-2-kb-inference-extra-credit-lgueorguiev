@@ -161,8 +161,8 @@ class KnowledgeBase(object):
             ret += "rule: ("
             for i in fact_or_rule.lhs:
                 ret += str(i) + ", "
-            ret = ret[:-2]
-            ret += ") -> " + str(fact_or_rule.rhs)
+            ret = ret[:-2] + ret[len(ret)-1:len(ret)]
+            ret += " -> " + str(fact_or_rule.rhs)
         if fact_or_rule.supported_by:
             ret += "\n"
             for j in fact_or_rule.supported_by:
