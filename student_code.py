@@ -156,22 +156,28 @@ class KnowledgeBase(object):
     def recur(self, fact_or_rule, counter):
         ret = ""
         if isinstance(fact_or_rule, Fact):
+            fr_exists = self._get_fact(fact_or_rule)
             ret += "fact: " + str(fact_or_rule.statement)
         if isinstance(fact_or_rule, Rule):
+            fr_exists = self._get_rule(fact_or_rule)
             ret += "rule: ("
             for i in fact_or_rule.lhs:
                 ret += str(i) + ", "
-            ret = ret[:-2] + ret[len(ret) - 1:len(ret)]
+            ret = ret[:-2] + ret[len(ret) - 3:len(ret)-2]
             ret += " -> " + str(fact_or_rule.rhs)
-        if fact_or_rule.supported_by:
-            if fact_or_rule.asserted:
-                ret += " ASSERTED\n"
-            else:
-                ret += "\n"
-            for j in fact_or_rule.supported_by:
-                ret += " " * (counter + 2) + "SUPPORTED BY\n"
-                ret += self.recur(j[0], counter + 4) + self.recur(j[1], counter + 4)
-        return ret
+
+        new_ret = " " * counter + ret
+
+        if fr_exists.asserted:
+            new_ret += " ASSERTED\n"
+        else:
+            new_ret += "\n"
+
+        for j in fr_exists.supported_by:
+            new_ret += " " * (counter + 2) + "SUPPORTED BY\n"
+            new_ret += self.recur(j[0], counter + 4) + self.recur(j[1], counter + 4)
+
+        return new_ret
 
 
 class InferenceEngine(object):
